@@ -1,0 +1,55 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# JSON
+*.json
+
+# CMake things
+CMakeCache.txt
+CMakeFiles/
+*.cmake
+Makefile
+*.cbp
+
+# Binaries
+test_autodiff
+test_variable
+test_graph
+
+# Garbage
+.cache
+.ccls-cache
+.idea
+Testing
+
+
