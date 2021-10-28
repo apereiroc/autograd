@@ -15,7 +15,7 @@ class Variable : public Node {
 
     Variable(const T& value)
     : _value(value),
-      _g(NULL)
+      _g(nullptr)
     {}
 
     Variable(const T& value, Graph *g)
