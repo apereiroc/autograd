@@ -2,8 +2,9 @@ import os
 from sys import platform
 
 env = Environment(ENV=os.environ)
-env.Tool('compilation_db')
-env.CompilationDatabase()
+if platform == 'darwin':
+    env.Tool('compilation_db')
+    env.CompilationDatabase()
 
 
 # Set environment
