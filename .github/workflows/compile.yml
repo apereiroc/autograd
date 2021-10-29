@@ -25,5 +25,7 @@ jobs:
       # Checks github
       - name: Set up Git repository
         uses: actions/checkout@v2
+      - name: Install SCons
+        run: sudo apt install scons
       - name: Compile tests
         run: scons -j4
