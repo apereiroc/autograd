@@ -13,9 +13,14 @@ class Graph {
   public:
     Graph() : n_variables(0),
               n_operators(0)
-    {}
+    {
+      std::cout << "Graph created" << std::endl;
+    }
 
-    ~Graph() = default;
+    /* ~Graph() = default; */
+    ~Graph() {
+      std::cout << "Graph destroyed" << std::endl;
+    }
 
     void restart() {
       n_variables = 0;
@@ -25,17 +30,17 @@ class Graph {
       variables.clear();
     }
 
-    /* template <class... Variables> */
-    /* void add_variable(Variables&... vars){ */
-    /*   (variables.push_back(vars), ...); */
-    /*   (vars.set_graph(this), ...); */
-    /*   n_variables += variables.size(); */
-    /* } */
 
     void add_variable(Variable<>& var){
         variables.push_back(var);
         var.set_graph(this);
         n_variables += 1;
+    }
+
+    template <class... Variables>
+    void add_variable(Variable<>& var, Variables&... vars){
+      add_variable(var);
+      add_variable(vars...);
     }
 
     void add_operator( const Operator& op )
@@ -48,8 +53,7 @@ class Graph {
     {
       unsigned int i = 0;
       for ( auto& var : variables ) {
-          i++;
-          std::cout << "Var #" << i << ": " << var.get_value() << std::endl;
+          std::cout << "Var #" << ++i << ": " << var.get_value() << std::endl;
       }
     }
 
