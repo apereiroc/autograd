@@ -34,7 +34,7 @@ class Graph {
     void add_variable(Variable<>& var){
         variables.push_back(var);
         var.set_graph(this);
-        n_variables += 1;
+        n_variables++;
     }
 
     template <class... Variables>
