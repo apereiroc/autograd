@@ -1,5 +1,5 @@
-#ifndef VARIABLE_H
-#define VARIABLE_H
+#ifndef AUTOGRAD_VARIABLE_H
+#define AUTOGRAD_VARIABLE_H
 
 #include <cstddef>
 #include "node.h"
@@ -39,7 +39,8 @@ class Variable : public Node {
         }
 
         Variable result( this->_value + other.get_value(), this->_g);
-        this->_g->add_variable(result);
+        if (this->_g != nullptr)
+          this->_g->add_variable(result);
 
         return result;
     }
@@ -52,7 +53,8 @@ class Variable : public Node {
       }
 
       Variable result( this->_value - other.get_value(), this->_g);
-      this->_g->add_variable(result);
+      if (this->_g != nullptr)
+        this->_g->add_variable(result);
 
       return result;
     }
@@ -65,7 +67,9 @@ class Variable : public Node {
       }
 
       Variable result( this->_value * other.get_value(), this->_g);
-      this->_g->add_variable(result);
+
+      if (this->_g != nullptr)
+        this->_g->add_variable(result);
 
       return result;
     }
@@ -81,7 +85,9 @@ class Variable : public Node {
       }
 
       Variable result( this->_value / other.get_value() );
-      this->_g->add_variable(result);
+
+      if (this->_g != nullptr)
+        this->_g->add_variable(result);
       
       return result;
     }
@@ -103,7 +109,7 @@ class Variable : public Node {
 
     //TODO: implement more operators
 
-    friend std::ostream& operator<<(std::ostream& os, Variable var){
+    friend std::ostream& operator<<(std::ostream& os, const Variable& var){
       os << var.get_value();
       return os;
     }
@@ -113,4 +119,4 @@ class Variable : public Node {
     Graph* _g;
 };
 
-#endif // VARIABLE_H
+#endif // AUTOGRAD_VARIABLE_H
