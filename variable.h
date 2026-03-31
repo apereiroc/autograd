@@ -1,122 +1,65 @@
 #ifndef AUTOGRAD_VARIABLE_H
 #define AUTOGRAD_VARIABLE_H
 
-#include <cstddef>
 #include "node.h"
-#include "graph.h"
+#include <cmath>
+#include <cstddef>
+#include <iostream>
+#include <limits>
+#include <stdexcept>
 
-//TODO: add documentation
+// Forward declaration to avoid circular dependency
 class Graph;
 
-template <typename T = double>
-class Variable : public Node {
-  public:
-    //Variable() { _value = 0; }
+template <typename T = double> class Variable : public Node {
+public:
+  Variable(const T &value) : _value(value), _gradient(0), _g(nullptr) {}
 
-    Variable(const T& value)
-    : _value(value),
-      _g(nullptr)
-    {}
+  Variable(const T &value, Graph *g) : _value(value), _gradient(0), _g(g) {}
 
-    Variable(const T& value, Graph *g)
-    : _value(value),
-      _g(g)
-    {}
+  void set_value(const T &value) { _value = value; }
 
-    void set_value(const T& value) { _value = value; }
+  const T &get_value() const { return _value; }
 
-    const T& get_value() const { return _value; }
+  void set_gradient(const T &grad) { _gradient = grad; }
 
-    void set_graph(Graph* g) {_g = g ;}
+  const T &get_gradient() const { return _gradient; }
 
-    const Graph* get_graph() const { return _g; }
+  void add_gradient(const T &grad) { _gradient += grad; }
 
-    Variable operator+(const Variable& other) const
-    {
-        if (this->_g != other.get_graph()){
-            std::cout << "ERROR: variables exist in different graphs" << std::endl;
-            exit(1);
-        }
+  void zero_gradient() { _gradient = 0; }
 
-        Variable result( this->_value + other.get_value(), this->_g);
-        if (this->_g != nullptr)
-          this->_g->add_variable(result);
+  void set_graph(Graph *g) { _g = g; }
 
-        return result;
-    }
+  const Graph *get_graph() const { return _g; }
 
-    Variable operator-(const Variable& other) const
-    {
-      if (this->_g != other.get_graph()){
-          std::cout << "ERROR: variables exist in different graphs" << std::endl;
-          exit(1);
-      }
+  // Operator declarations - implementations at end of file
+  Variable operator+(const Variable &other) const;
+  Variable operator-(const Variable &other) const;
+  Variable operator*(const Variable &other) const;
+  Variable operator/(const Variable &other) const;
 
-      Variable result( this->_value - other.get_value(), this->_g);
-      if (this->_g != nullptr)
-        this->_g->add_variable(result);
+  bool operator==(const Variable &other) const {
+    return this->_value == other.get_value();
+  }
 
-      return result;
-    }
+  bool operator!=(const Variable &other) const {
+    return this->_value != other.get_value();
+  }
 
-    Variable operator*(const Variable& other) const
-    {
-      if (this->_g != other.get_graph()){
-          std::cout << "ERROR: variables exist in different graphs" << std::endl;
-          exit(1);
-      }
+  bool operator==(const T &other) const { return this->get_value() == other; }
 
-      Variable result( this->_value * other.get_value(), this->_g);
+  // TODO: implement more operators
 
-      if (this->_g != nullptr)
-        this->_g->add_variable(result);
+  friend std::ostream &operator<<(std::ostream &os, const Variable &var) {
+    os << var.get_value();
+    return os;
+  }
 
-      return result;
-    }
-
-    Variable operator/(const Variable& other) const
-    {
-      if (other.get_value() == 0)
-          throw std::runtime_error("Division by 0");
-      
-      if (this->_g != other.get_graph()){
-          std::cout << "ERROR: variables exist in different graphs" << std::endl;
-          exit(1);
-      }
-
-      Variable result( this->_value / other.get_value() );
-
-      if (this->_g != nullptr)
-        this->_g->add_variable(result);
-      
-      return result;
-    }
-
-    bool operator==(const Variable& other) const
-    {
-        return this->_value == other.get_value();
-    }
-
-    bool operator!=(const Variable& other) const
-    {
-        return this->_value != other.get_value();
-    }
-
-    bool operator==(const T& other) const
-    {
-        return this->get_value() == other;
-    }
-
-    //TODO: implement more operators
-
-    friend std::ostream& operator<<(std::ostream& os, const Variable& var){
-      os << var.get_value();
-      return os;
-    }
-
-  private:
-    T _value;
-    Graph* _g;
+private:
+  T _value;
+  T _gradient;
+  Graph *_g;
 };
 
 #endif // AUTOGRAD_VARIABLE_H
